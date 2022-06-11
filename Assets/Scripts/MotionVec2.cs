@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine.InputSystem;
 using UnityEngine;
 
-public class AxisMovement : MonoBehaviour
+public class MotionVec2 : MonoBehaviour
 {
     private const float MinInterpolateValue = 0.001f;
 
@@ -19,7 +19,7 @@ public class AxisMovement : MonoBehaviour
 
     private Vector2 m_prevMove;
     private Vector2 m_move;
-    private float m_timeSinceCancelInput = 0f;
+    private float m_timeSinceLastInput = 0f;
 
 
     private void Start()
@@ -46,11 +46,11 @@ public class AxisMovement : MonoBehaviour
     private void Update()
     {
         timeForInterpolation = Mathf.Max(MinInterpolateValue, timeForInterpolation);
-        m_timeSinceCancelInput += Time.deltaTime * (1f / timeForInterpolation);
+        m_timeSinceLastInput += Time.deltaTime * (1f / timeForInterpolation);
 
         Vector3 trueMove = new Vector3(m_move.x, 0f, m_move.y);
         Vector3 prevMove = new Vector3(m_prevMove.x, 0f, m_prevMove.y);
-        trueMove = (interpolateInput) ? Vector2.Lerp(prevMove, trueMove, m_timeSinceCancelInput) : trueMove;
+        trueMove = (interpolateInput) ? Vector3.Lerp(prevMove, trueMove, m_timeSinceLastInput) : trueMove;
 
         if (local) trueMove = transform.rotation * trueMove;
 
@@ -67,6 +67,6 @@ public class AxisMovement : MonoBehaviour
 
         m_prevMove = m_move;
         m_move = ctx.ReadValue<Vector2>();
-        m_timeSinceCancelInput = 0f;
+        m_timeSinceLastInput = 0f;
     }
 }

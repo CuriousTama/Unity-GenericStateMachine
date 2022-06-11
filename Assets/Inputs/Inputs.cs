@@ -37,9 +37,18 @@ public partial class @Inputs : IInputActionCollection2, IDisposable
                     ""initialStateCheck"": true
                 },
                 {
-                    ""name"": ""Test"",
+                    ""name"": ""MoveAxisH"",
                     ""type"": ""Value"",
                     ""id"": ""e58fcea2-1eac-43e1-8bc5-5356dccbd670"",
+                    ""expectedControlType"": ""Axis"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""MoveAxisV"",
+                    ""type"": ""Value"",
+                    ""id"": ""340839e3-82b0-46ae-8be0-608088119698"",
                     ""expectedControlType"": ""Axis"",
                     ""processors"": """",
                     ""interactions"": """",
@@ -169,37 +178,158 @@ public partial class @Inputs : IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": true
                 },
                 {
-                    ""name"": ""1D Axis"",
-                    ""id"": ""b99a5406-8cdb-43b7-bd13-743ab41d53b7"",
+                    ""name"": ""Horizontal"",
+                    ""id"": ""efd5cb73-95a4-49ea-acaf-ef599ffad832"",
                     ""path"": ""1DAxis"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Test"",
+                    ""action"": ""MoveAxisH"",
                     ""isComposite"": true,
                     ""isPartOfComposite"": false
                 },
                 {
                     ""name"": ""negative"",
-                    ""id"": ""84e5149e-4459-4538-aeb8-16fc86f03150"",
+                    ""id"": ""f08da888-e88e-4a41-83f3-71cbd52bf3ff"",
                     ""path"": ""<Keyboard>/a"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Test"",
+                    ""action"": ""MoveAxisH"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
                 {
                     ""name"": ""positive"",
-                    ""id"": ""91d68447-ebc6-46fb-a1ba-0defeb96fe25"",
+                    ""id"": ""04b9fa0a-3744-4b21-ac41-1757fd338ca6"",
                     ""path"": ""<Keyboard>/d"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Test"",
+                    ""action"": ""MoveAxisH"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""Arrow"",
+                    ""id"": ""bac61fb7-d7c1-4218-9f30-8bd174eef194"",
+                    ""path"": ""1DAxis"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MoveAxisH"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""negative"",
+                    ""id"": ""e8d9f1bd-fcad-4d83-bdfe-99ed68f5706b"",
+                    ""path"": ""<Keyboard>/leftArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MoveAxisH"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""positive"",
+                    ""id"": ""07dbf2b4-d54c-4962-afc9-d5fd4a2a9adc"",
+                    ""path"": ""<Keyboard>/rightArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MoveAxisH"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""10e91b57-5ec3-4b6b-93c4-85c67b45abdb"",
+                    ""path"": ""<Gamepad>/leftStick/x"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MoveAxisH"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""Vertical"",
+                    ""id"": ""863b0752-769e-4a35-8023-7fd1ce8f20f6"",
+                    ""path"": ""1DAxis"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MoveAxisV"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""negative"",
+                    ""id"": ""4f88a39c-f231-4d1e-95a3-0595b7ef9248"",
+                    ""path"": ""<Keyboard>/s"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MoveAxisV"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""positive"",
+                    ""id"": ""e5da0961-c357-4fb4-8c63-a35b4bf7bfc2"",
+                    ""path"": ""<Keyboard>/w"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MoveAxisV"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""Arrow"",
+                    ""id"": ""76597ea8-b6d0-4612-8cd5-bed8d62d9601"",
+                    ""path"": ""1DAxis"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MoveAxisV"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""negative"",
+                    ""id"": ""50917662-e033-45df-8491-b077c96c5979"",
+                    ""path"": ""<Keyboard>/downArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MoveAxisV"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""positive"",
+                    ""id"": ""65b1984d-7747-4fdc-a2ae-e002af89c90e"",
+                    ""path"": ""<Keyboard>/upArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MoveAxisV"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""ed4dc2b1-e9cd-4702-bef3-4eb18a138547"",
+                    ""path"": ""<Gamepad>/leftStick/y"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MoveAxisV"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -209,7 +339,8 @@ public partial class @Inputs : IInputActionCollection2, IDisposable
         // Map
         m_Map = asset.FindActionMap("Map", throwIfNotFound: true);
         m_Map_Move = m_Map.FindAction("Move", throwIfNotFound: true);
-        m_Map_Test = m_Map.FindAction("Test", throwIfNotFound: true);
+        m_Map_MoveAxisH = m_Map.FindAction("MoveAxisH", throwIfNotFound: true);
+        m_Map_MoveAxisV = m_Map.FindAction("MoveAxisV", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -270,13 +401,15 @@ public partial class @Inputs : IInputActionCollection2, IDisposable
     private readonly InputActionMap m_Map;
     private IMapActions m_MapActionsCallbackInterface;
     private readonly InputAction m_Map_Move;
-    private readonly InputAction m_Map_Test;
+    private readonly InputAction m_Map_MoveAxisH;
+    private readonly InputAction m_Map_MoveAxisV;
     public struct MapActions
     {
         private @Inputs m_Wrapper;
         public MapActions(@Inputs wrapper) { m_Wrapper = wrapper; }
         public InputAction @Move => m_Wrapper.m_Map_Move;
-        public InputAction @Test => m_Wrapper.m_Map_Test;
+        public InputAction @MoveAxisH => m_Wrapper.m_Map_MoveAxisH;
+        public InputAction @MoveAxisV => m_Wrapper.m_Map_MoveAxisV;
         public InputActionMap Get() { return m_Wrapper.m_Map; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -289,9 +422,12 @@ public partial class @Inputs : IInputActionCollection2, IDisposable
                 @Move.started -= m_Wrapper.m_MapActionsCallbackInterface.OnMove;
                 @Move.performed -= m_Wrapper.m_MapActionsCallbackInterface.OnMove;
                 @Move.canceled -= m_Wrapper.m_MapActionsCallbackInterface.OnMove;
-                @Test.started -= m_Wrapper.m_MapActionsCallbackInterface.OnTest;
-                @Test.performed -= m_Wrapper.m_MapActionsCallbackInterface.OnTest;
-                @Test.canceled -= m_Wrapper.m_MapActionsCallbackInterface.OnTest;
+                @MoveAxisH.started -= m_Wrapper.m_MapActionsCallbackInterface.OnMoveAxisH;
+                @MoveAxisH.performed -= m_Wrapper.m_MapActionsCallbackInterface.OnMoveAxisH;
+                @MoveAxisH.canceled -= m_Wrapper.m_MapActionsCallbackInterface.OnMoveAxisH;
+                @MoveAxisV.started -= m_Wrapper.m_MapActionsCallbackInterface.OnMoveAxisV;
+                @MoveAxisV.performed -= m_Wrapper.m_MapActionsCallbackInterface.OnMoveAxisV;
+                @MoveAxisV.canceled -= m_Wrapper.m_MapActionsCallbackInterface.OnMoveAxisV;
             }
             m_Wrapper.m_MapActionsCallbackInterface = instance;
             if (instance != null)
@@ -299,9 +435,12 @@ public partial class @Inputs : IInputActionCollection2, IDisposable
                 @Move.started += instance.OnMove;
                 @Move.performed += instance.OnMove;
                 @Move.canceled += instance.OnMove;
-                @Test.started += instance.OnTest;
-                @Test.performed += instance.OnTest;
-                @Test.canceled += instance.OnTest;
+                @MoveAxisH.started += instance.OnMoveAxisH;
+                @MoveAxisH.performed += instance.OnMoveAxisH;
+                @MoveAxisH.canceled += instance.OnMoveAxisH;
+                @MoveAxisV.started += instance.OnMoveAxisV;
+                @MoveAxisV.performed += instance.OnMoveAxisV;
+                @MoveAxisV.canceled += instance.OnMoveAxisV;
             }
         }
     }
@@ -309,6 +448,7 @@ public partial class @Inputs : IInputActionCollection2, IDisposable
     public interface IMapActions
     {
         void OnMove(InputAction.CallbackContext context);
-        void OnTest(InputAction.CallbackContext context);
+        void OnMoveAxisH(InputAction.CallbackContext context);
+        void OnMoveAxisV(InputAction.CallbackContext context);
     }
 }
