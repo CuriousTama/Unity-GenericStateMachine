@@ -2,10 +2,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.InputSystem;
 using UnityEngine;
+using TMPro;
 
-public class InputSystemState : State
+public class InputSystemState : State 
 {
     private Inputs inputs = new Inputs();
+    private TextMeshProUGUI text;
+
+    public override void Init()
+    {
+        text = stateMachine.GetVariable<TextMeshProUGUI>("Text");
+    }
 
     public override void RegisterInput()
     {
@@ -22,6 +29,7 @@ public class InputSystemState : State
     public override void Enter()
     {
         base.Enter();
+        text.text = "Input System State";
     }
 
     public override void Exit()
@@ -31,7 +39,6 @@ public class InputSystemState : State
 
     public override void Update()
     {
-        Debug.Log("Via input system");
     }
 
 

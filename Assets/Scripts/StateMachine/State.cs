@@ -7,6 +7,9 @@ public abstract class State
         this.stateMachine = stateMachine;
     }
 
+    public virtual void Init()
+    {
+    }
 
     public virtual void Enter()
     {

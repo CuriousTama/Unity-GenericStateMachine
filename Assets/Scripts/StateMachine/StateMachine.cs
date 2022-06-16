@@ -8,7 +8,7 @@ public class StateMachine : MonoBehaviour
 {
     [Space(10f)]
     [Tooltip("The state set on Awake of GameObject. can be null for no starting state")]
-    [SerializeField] private MonoScript startingState;
+    [SerializeField] private MonoScript startingState = null;
     [Tooltip("If true skip the next PreUpdate, Update and LateUpdate of the new state when using ChangeState() Method.")]
     [SerializeField] private bool changingStateSkip = false;
     [Space(10f)]
@@ -17,7 +17,10 @@ public class StateMachine : MonoBehaviour
     [Tooltip("If true generate every possible states on Awake of GameObject and keep theme in a cache.")]
     [SerializeField] private bool cachingStates = false;
     [Tooltip("Is used when canHaveAnyStates is false")]
-    [SerializeField] private List<MonoScript> possibleStates;
+    [SerializeField] private List<MonoScript> possibleStates = new List<MonoScript>();
+
+
+    [SerializeField] private StateVariable[] variables;
 
     private State[] m_stateCache;
     private State m_currentState;
@@ -120,14 +123,27 @@ public class StateMachine : MonoBehaviour
         if (cachingStates)
             m_currentState = m_stateCache.Where((state) => state.GetType() == type).First();
         else
-        {
             m_currentState = System.Activator.CreateInstance(type) as State;
-            m_currentState.SetStateMachine(this);
-        }
 
+        m_currentState.SetStateMachine(this);
+        m_currentState?.Init();
         m_currentState?.Enter();
 
         if (changingStateSkip)
             m_blockingNextFrame = true;
+    }
+
+    public T GetVariable<T>(string name) where T : Object
+    {
+        foreach (StateVariable variable in variables)
+        {
+            if (variable.name == name && variable.obj is T)
+            {
+                return (T)variable.obj;
+            }
+        }
+
+        Debug.LogWarning("Variable \"" + name + "\" of type \"" + typeof(T).Name + "\" not found");
+        return null;
     }
 }
