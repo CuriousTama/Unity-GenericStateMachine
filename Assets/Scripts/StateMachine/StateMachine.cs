@@ -6,23 +6,37 @@ using System.Linq;
 
 public class StateMachine : MonoBehaviour
 {
-    [SerializeField] private List<MonoScript> states;
+    [Space(10f)]
+    [Tooltip("The state set on Awake of GameObject. can be null for no starting state")]
+    [SerializeField] private MonoScript startingState;
+    [Tooltip("If true skip the next PreUpdate, Update and LateUpdate of the new state when using ChangeState() Method.")]
+    [SerializeField] private bool changingStateSkip = false;
+    [Space(10f)]
+    [Tooltip("Can't be true at same time as caching")]
+    [SerializeField] private bool canHaveAnyStates = true;
+    [Tooltip("If true generate every possible states on Awake of GameObject and keep theme in a cache.")]
     [SerializeField] private bool cachingStates = false;
+    [Tooltip("Is used when canHaveAnyStates is false")]
+    [SerializeField] private List<MonoScript> possibleStates;
 
-    private IState[] stateCache;
-    private IState currentState;
+    private State[] m_stateCache;
+    private State m_currentState;
+    private bool m_blockingNextFrame = false;
 
     private void OnValidate()
     {
-        states.RemoveAll((state) =>
+        possibleStates.RemoveAll((state) =>
         {
-            bool returnValue = state != null && typeof(IState).IsAssignableFrom(state.GetClass()) == false;
+            bool returnValue = state != null && typeof(State).IsAssignableFrom(state.GetClass()) == false;
 
             if (returnValue)
                 Debug.LogWarning(state.GetClass().Name + " is not a state (IState interface) and have benn removed.");
 
             return returnValue;
         });
+
+        if (cachingStates)
+            canHaveAnyStates = false;
     }
 
     private void Awake()
@@ -30,37 +44,49 @@ public class StateMachine : MonoBehaviour
         if (cachingStates)
             CreateCache();
 
-        ChangeState(typeof(TestState));
-        ChangeState(typeof(StateMachine));
+        if (startingState != null)
+            ChangeState(startingState.GetClass());
+
+        m_blockingNextFrame = false;
     }
 
     private void Update()
     {
-        currentState?.PreUpdate(this);
-        currentState?.Update(this);
+        if (m_blockingNextFrame)
+            return;
+
+        m_currentState?.PreUpdate();
+        m_currentState?.Update();
     }
 
     private void LateUpdate()
     {
-        currentState?.LateUpdate(this);
+        if (m_blockingNextFrame)
+        {
+            m_blockingNextFrame = false;
+            return;
+        }
+
+        m_currentState?.LateUpdate();
     }
 
     private void FixedUpdate()
     {
-        currentState?.FixedUpdate(this);
+        m_currentState?.FixedUpdate();
     }
 
 
 
     private void CreateCache()
     {
-        states.RemoveAll((state) => state == null || typeof(IState).IsAssignableFrom(state.GetClass()) == false);
+        possibleStates.RemoveAll((state) => state == null || typeof(State).IsAssignableFrom(state.GetClass()) == false);
 
-        stateCache = new IState[states.Count];
+        m_stateCache = new State[possibleStates.Count];
 
-        for (int i = 0; i < states.Count; i++)
+        for (int i = 0; i < possibleStates.Count; i++)
         {
-            stateCache[i] = System.Activator.CreateInstance(states[i].GetClass()) as IState;
+            m_stateCache[i] = System.Activator.CreateInstance(possibleStates[i].GetClass()) as State;
+            m_stateCache[i].SetStateMachine(this);
         }
     }
 
@@ -68,27 +94,40 @@ public class StateMachine : MonoBehaviour
 
     public void ChangeState(System.Type type)
     {
-        if (!typeof(IState).IsAssignableFrom(type))
+        if (!typeof(State).IsAssignableFrom(type))
         {
             Debug.LogWarning(type.Name + " is not a state (IState interface), ChangeState() canceled.");
             return;
         }
 
-        if (cachingStates && stateCache.Where((state) => state.GetType() == type).FirstOrDefault() == null)
+        if (!canHaveAnyStates && possibleStates.Where((state) => state != null && state.GetClass() == type).FirstOrDefault() == null)
         {
             Debug.LogWarning(type.Name + " is not repetoried in the GameObject, ChangeState() canceled.");
             return;
         }
 
+        // happen only if you change possibleStates list in runtime (can only be changed in inspector)
+        if (cachingStates && m_stateCache.Where((state) => state != null && state.GetType() == type).FirstOrDefault() == null)
+        {
+            Debug.LogWarning(type.Name + " is not found in the cache, ChangeState() canceled.");
+            return;
+        }
 
 
-        currentState?.Exit(this);
+
+        m_currentState?.Exit();
 
         if (cachingStates)
-            currentState = stateCache.Where((state) => state.GetType() == type).First();
+            m_currentState = m_stateCache.Where((state) => state.GetType() == type).First();
         else
-            currentState = System.Activator.CreateInstance(type) as IState;
+        {
+            m_currentState = System.Activator.CreateInstance(type) as State;
+            m_currentState.SetStateMachine(this);
+        }
 
-        currentState?.Enter(this);
+        m_currentState?.Enter();
+
+        if (changingStateSkip)
+            m_blockingNextFrame = true;
     }
 }

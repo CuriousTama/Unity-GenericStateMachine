@@ -332,6 +332,34 @@ public partial class @Inputs : IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""StateMachineTests"",
+            ""id"": ""447c26e2-64d4-4dff-a601-f8d24241cd5c"",
+            ""actions"": [
+                {
+                    ""name"": ""Space"",
+                    ""type"": ""Button"",
+                    ""id"": ""1d4a3977-2680-4618-9c12-dd527b190785"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""5d964076-a6f6-4191-9c85-4ff69af224d6"",
+                    ""path"": ""<Keyboard>/space"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Space"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": []
@@ -341,6 +369,9 @@ public partial class @Inputs : IInputActionCollection2, IDisposable
         m_Map_Move = m_Map.FindAction("Move", throwIfNotFound: true);
         m_Map_MoveAxisH = m_Map.FindAction("MoveAxisH", throwIfNotFound: true);
         m_Map_MoveAxisV = m_Map.FindAction("MoveAxisV", throwIfNotFound: true);
+        // StateMachineTests
+        m_StateMachineTests = asset.FindActionMap("StateMachineTests", throwIfNotFound: true);
+        m_StateMachineTests_Space = m_StateMachineTests.FindAction("Space", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -445,10 +476,47 @@ public partial class @Inputs : IInputActionCollection2, IDisposable
         }
     }
     public MapActions @Map => new MapActions(this);
+
+    // StateMachineTests
+    private readonly InputActionMap m_StateMachineTests;
+    private IStateMachineTestsActions m_StateMachineTestsActionsCallbackInterface;
+    private readonly InputAction m_StateMachineTests_Space;
+    public struct StateMachineTestsActions
+    {
+        private @Inputs m_Wrapper;
+        public StateMachineTestsActions(@Inputs wrapper) { m_Wrapper = wrapper; }
+        public InputAction @Space => m_Wrapper.m_StateMachineTests_Space;
+        public InputActionMap Get() { return m_Wrapper.m_StateMachineTests; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(StateMachineTestsActions set) { return set.Get(); }
+        public void SetCallbacks(IStateMachineTestsActions instance)
+        {
+            if (m_Wrapper.m_StateMachineTestsActionsCallbackInterface != null)
+            {
+                @Space.started -= m_Wrapper.m_StateMachineTestsActionsCallbackInterface.OnSpace;
+                @Space.performed -= m_Wrapper.m_StateMachineTestsActionsCallbackInterface.OnSpace;
+                @Space.canceled -= m_Wrapper.m_StateMachineTestsActionsCallbackInterface.OnSpace;
+            }
+            m_Wrapper.m_StateMachineTestsActionsCallbackInterface = instance;
+            if (instance != null)
+            {
+                @Space.started += instance.OnSpace;
+                @Space.performed += instance.OnSpace;
+                @Space.canceled += instance.OnSpace;
+            }
+        }
+    }
+    public StateMachineTestsActions @StateMachineTests => new StateMachineTestsActions(this);
     public interface IMapActions
     {
         void OnMove(InputAction.CallbackContext context);
         void OnMoveAxisH(InputAction.CallbackContext context);
         void OnMoveAxisV(InputAction.CallbackContext context);
+    }
+    public interface IStateMachineTestsActions
+    {
+        void OnSpace(InputAction.CallbackContext context);
     }
 }
