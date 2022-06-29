@@ -7,6 +7,10 @@ using System.Linq;
 public class StateMachine : MonoBehaviour
 {
     [Space(10f)]
+    [Tooltip("Reference to the set of variables to use.")]
+    public StateVariables variables;
+
+    [Space(10f)]
     [Tooltip("The state set on Awake of GameObject. can be null for no starting state")]
     [SerializeField] private MonoScript startingState = null;
     [Tooltip("If true skip the next PreUpdate, Update and LateUpdate of the new state when using ChangeState() Method.")]
@@ -20,14 +24,33 @@ public class StateMachine : MonoBehaviour
     [SerializeField] private List<MonoScript> possibleStates = new List<MonoScript>();
 
 
-    [SerializeField] private StateVariable[] variables;
-
     private State[] m_stateCache;
     private State m_currentState;
     private bool m_blockingNextFrame = false;
 
+    // SerializeField attribute is here to avoid variable to reset when setting playmode or reload 
+    // and we don't want to see it to HideInInspector attribute
+    [SerializeField, HideInInspector] private bool m_onCreate = true; 
+
+
+#if UNITY_EDITOR
     private void OnValidate()
     {
+        EditorApplication.delayCall += _OnValidate;
+    }
+
+    private void _OnValidate()
+    {
+        EditorApplication.delayCall -= _OnValidate;
+        if (this == null) return;
+
+
+        if (m_onCreate)
+        {
+            OnObjectCreated();
+            m_onCreate = false;
+        }
+
         possibleStates.RemoveAll((state) =>
         {
             bool returnValue = state != null && typeof(State).IsAssignableFrom(state.GetClass()) == false;
@@ -41,16 +64,17 @@ public class StateMachine : MonoBehaviour
         if (cachingStates)
             canHaveAnyStates = false;
     }
+#endif
 
     private void Awake()
     {
-        if (cachingStates)
+        if (cachingStates) // Caching states if set to true.
             CreateCache();
 
-        if (startingState != null)
+        if (startingState != null) // Launch the starting state.
             ChangeState(startingState.GetClass());
 
-        m_blockingNextFrame = false;
+        m_blockingNextFrame = false; // don't want to block the first state even if the changingStateSkip is true.
     }
 
     private void Update()
@@ -76,21 +100,6 @@ public class StateMachine : MonoBehaviour
     private void FixedUpdate()
     {
         m_currentState?.FixedUpdate();
-    }
-
-
-
-    private void CreateCache()
-    {
-        possibleStates.RemoveAll((state) => state == null || typeof(State).IsAssignableFrom(state.GetClass()) == false);
-
-        m_stateCache = new State[possibleStates.Count];
-
-        for (int i = 0; i < possibleStates.Count; i++)
-        {
-            m_stateCache[i] = System.Activator.CreateInstance(possibleStates[i].GetClass()) as State;
-            m_stateCache[i].SetStateMachine(this);
-        }
     }
 
 
@@ -133,17 +142,24 @@ public class StateMachine : MonoBehaviour
             m_blockingNextFrame = true;
     }
 
-    public T GetVariable<T>(string name) where T : Object
-    {
-        foreach (StateVariable variable in variables)
-        {
-            if (variable.name == name && variable.obj is T)
-            {
-                return (T)variable.obj;
-            }
-        }
 
-        Debug.LogWarning("Variable \"" + name + "\" of type \"" + typeof(T).Name + "\" not found");
-        return null;
+
+    private void OnObjectCreated()
+    {
+        StateVariables variables = gameObject.AddComponent<StateVariables>();
+        this.variables = variables;
+    }
+
+    private void CreateCache()
+    {
+        possibleStates.RemoveAll((state) => state == null || typeof(State).IsAssignableFrom(state.GetClass()) == false);
+
+        m_stateCache = new State[possibleStates.Count];
+
+        for (int i = 0; i < possibleStates.Count; i++)
+        {
+            m_stateCache[i] = System.Activator.CreateInstance(possibleStates[i].GetClass()) as State;
+            m_stateCache[i].SetStateMachine(this);
+        }
     }
 }

@@ -11,7 +11,7 @@ public class InputSystemState : State
 
     public override void Init()
     {
-        text = stateMachine.GetVariable<TextMeshProUGUI>("Text");
+        text = stateMachine.variables.Get<TextMeshProUGUI>("Text");
     }
 
     public override void RegisterInput()
