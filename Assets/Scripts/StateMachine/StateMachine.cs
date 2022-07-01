@@ -1,8 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEditor;
 using System.Linq;
+using System;
+
+
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
+
+
 
 public class StateMachine : MonoBehaviour
 {
@@ -10,57 +17,76 @@ public class StateMachine : MonoBehaviour
     [Tooltip("Reference to the set of variables to use.")]
     public StateVariables variables;
 
-    [Space(10f)]
-    [Tooltip("The state set on Awake of GameObject. can be null for no starting state")]
-    [SerializeField] private MonoScript startingState = null;
+    [Space(20f)]
     [Tooltip("If true skip the next PreUpdate, Update and LateUpdate of the new state when using ChangeState() Method.")]
     [SerializeField] private bool changingStateSkip = false;
-    [Space(10f)]
     [Tooltip("Can't be true at same time as caching")]
     [SerializeField] private bool canHaveAnyStates = true;
     [Tooltip("If true generate every possible states on Awake of GameObject and keep theme in a cache.")]
     [SerializeField] private bool cachingStates = false;
+    [Space(20f)]
+
+    // MonoScript is an Editor type so not compiled in build.
+#if UNITY_EDITOR
+    [Tooltip("The state set on Awake of GameObject. can be null for no starting state")]
+    [SerializeField] private MonoScript startingState = null;
     [Tooltip("Is used when canHaveAnyStates is false")]
     [SerializeField] private List<MonoScript> possibleStates = new List<MonoScript>();
-
+#endif
 
     private State[] m_stateCache;
     private State m_currentState;
     private bool m_blockingNextFrame = false;
 
-    // SerializeField attribute is here to avoid variable to reset when setting playmode or reload 
-    // and we don't want to see it to HideInInspector attribute
-    [SerializeField, HideInInspector] private bool m_onCreate = true; 
+    // SerializeField attribute is here to avoid variable to reset when setting playmode, build or editor reload 
+    // and we don't want to see it to HideInInspector attribute.
+    [SerializeField, HideInInspector] private bool m_onCreate = true;
+
+    // Need to get AssemblyQualifiedName of types and save them beacause we don't have acces to editor stuff in build (bye bye MonoScript)
+    // and System.Type is not Serialized so don't save with "[SerializeField, HideInInspector]" attributes.
+    // Find System.Type by using System.Type.GetType("AssemblyQualifiedName") method.
+    // Performances is not perfect but still good (I think)
+    // sources of benchmark  (https://stackoverflow.com/questions/353342/performance-of-object-gettype/353435#353435).
+    [SerializeField, HideInInspector] private List<string> m_possibleStates = new List<string>();
+    [SerializeField, HideInInspector] private string m_startingState;
 
 
 #if UNITY_EDITOR
     private void OnValidate()
     {
+        // Delay OnValidate() call beacause of AddComponent throwing a warning if done at a wrong timing.
         EditorApplication.delayCall += _OnValidate;
     }
 
     private void _OnValidate()
     {
+        // Remove OnValidate() call once called.
         EditorApplication.delayCall -= _OnValidate;
         if (this == null) return;
 
-
+        // Add StateVariables component on adding this component creation.
+        // (we don't use [RequireComponent] if the user want to use a StateVariables of another GameObject).
         if (m_onCreate)
         {
-            OnObjectCreated();
+            AwakeEditor();
             m_onCreate = false;
         }
 
-        possibleStates.RemoveAll((state) =>
+
+        // Reset to null values that are not derived from "State" class.
+        possibleStates.ForEach((state) =>
         {
-            bool returnValue = state != null && typeof(State).IsAssignableFrom(state.GetClass()) == false;
-
-            if (returnValue)
-                Debug.LogWarning(state.GetClass().Name + " is not a state (IState interface) and have benn removed.");
-
-            return returnValue;
+            if (state != null && typeof(State).IsAssignableFrom(state.GetClass()) == false)
+            {
+                state = null;
+                Debug.LogWarning(state.GetClass().Name + " is not a state (IState interface) and have been removed.");
+            }
         });
 
+        m_possibleStates = possibleStates.Select((state) => state.GetClass().AssemblyQualifiedName).ToList();
+        m_startingState = startingState == null ? null : startingState.GetClass().AssemblyQualifiedName;
+
+        // Can't have cachingStates and canHaveAnyStates variables to true at the same time.
         if (cachingStates)
             canHaveAnyStates = false;
     }
@@ -68,13 +94,16 @@ public class StateMachine : MonoBehaviour
 
     private void Awake()
     {
-        if (cachingStates) // Caching states if set to true.
+        // Caching states if set to true.
+        if (cachingStates)
             CreateCache();
 
-        if (startingState != null) // Launch the starting state.
-            ChangeState(startingState.GetClass());
+        // Launch the starting state.
+        if (m_startingState != null)
+            ChangeState(Type.GetType(m_startingState));
 
-        m_blockingNextFrame = false; // don't want to block the first state even if the changingStateSkip is true.
+        // Don't want to block the first state even if the changingStateSkip is true.
+        m_blockingNextFrame = false;
     }
 
     private void Update()
@@ -104,21 +133,24 @@ public class StateMachine : MonoBehaviour
 
 
 
-    public void ChangeState(System.Type type)
+    public void ChangeState(Type type)
     {
+        // Check if type is derived from "State" class.
         if (!typeof(State).IsAssignableFrom(type))
         {
             Debug.LogWarning(type.Name + " is not a state (IState interface), ChangeState() canceled.");
             return;
         }
 
-        if (!canHaveAnyStates && possibleStates.Where((state) => state != null && state.GetClass() == type).FirstOrDefault() == null)
+        // Check if the state is in the list of possible states (if canHaveAnyStates is false).
+        if (!canHaveAnyStates && m_possibleStates.Where((state) => state != null && state == type.AssemblyQualifiedName).FirstOrDefault() == null)
         {
             Debug.LogWarning(type.Name + " is not repetoried in the GameObject, ChangeState() canceled.");
             return;
         }
 
-        // happen only if you change possibleStates list in runtime (can only be changed in inspector)
+        // Check if the state is in the list of cached states (if canHaveAnyStates is false).
+        // Happen only if you change possibleStates list in runtime (can only be changed in inspector).
         if (cachingStates && m_stateCache.Where((state) => state != null && state.GetType() == type).FirstOrDefault() == null)
         {
             Debug.LogWarning(type.Name + " is not found in the cache, ChangeState() canceled.");
@@ -129,6 +161,7 @@ public class StateMachine : MonoBehaviour
 
         m_currentState?.Exit();
 
+        // Get the cached state or create state.
         if (cachingStates)
             m_currentState = m_stateCache.Where((state) => state.GetType() == type).First();
         else
@@ -144,7 +177,7 @@ public class StateMachine : MonoBehaviour
 
 
 
-    private void OnObjectCreated()
+    private void AwakeEditor()
     {
         StateVariables variables = gameObject.AddComponent<StateVariables>();
         this.variables = variables;
@@ -152,13 +185,15 @@ public class StateMachine : MonoBehaviour
 
     private void CreateCache()
     {
-        possibleStates.RemoveAll((state) => state == null || typeof(State).IsAssignableFrom(state.GetClass()) == false);
+        // Get every states (redo a check "in case").
+        List<string> statesToCreate = m_possibleStates.Where((state) => state != null && typeof(State).IsAssignableFrom(Type.GetType(state))).ToList();
 
-        m_stateCache = new State[possibleStates.Count];
+        m_stateCache = new State[statesToCreate.Count];
 
-        for (int i = 0; i < possibleStates.Count; i++)
+        // Create states.
+        for (int i = 0; i < statesToCreate.Count; i++)
         {
-            m_stateCache[i] = System.Activator.CreateInstance(possibleStates[i].GetClass()) as State;
+            m_stateCache[i] = System.Activator.CreateInstance(Type.GetType(statesToCreate[i])) as State;
             m_stateCache[i].SetStateMachine(this);
         }
     }

@@ -184,12 +184,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   variables: {fileID: 479686704}
-  startingState: {fileID: 11500000, guid: b7460a139724e3b4095cd56967b6c4e0, type: 3}
   changingStateSkip: 1
-  canHaveAnyStates: 1
-  cachingStates: 0
-  possibleStates: []
+  canHaveAnyStates: 0
+  cachingStates: 1
+  startingState: {fileID: 11500000, guid: b7460a139724e3b4095cd56967b6c4e0, type: 3}
+  possibleStates:
+  - {fileID: 11500000, guid: b7460a139724e3b4095cd56967b6c4e0, type: 3}
+  - {fileID: 11500000, guid: 372a8da4c7efd3e4d824ab3ac44ddae3, type: 3}
   m_onCreate: 0
+  m_possibleStates:
+  - InputManagerState, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  - InputSystemState, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  m_startingState: InputManagerState, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+    PublicKeyToken=null
 --- !u!1 &576905795
 GameObject:
   m_ObjectHideFlags: 0
