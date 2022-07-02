@@ -7,8 +7,6 @@ using UnityEditorInternal;
 [CustomEditor(typeof(StateVariables))]
 public class VariablesEditor : Editor
 {
-    private bool variablesFoldout = true;
-
     SerializedProperty variables;
     ReorderableList list;
     private void OnEnable()
