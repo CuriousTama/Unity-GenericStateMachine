@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using UnityEditorInternal;
+using GenericStateMachine;
 
 [CustomEditor(typeof(StateVariables))]
 public class VariablesEditor : Editor

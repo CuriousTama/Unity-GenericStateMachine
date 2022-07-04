@@ -1,47 +1,60 @@
-public abstract class State
+namespace GenericStateMachine
 {
-    public StateMachine stateMachine { get; private set; }
-
-    public void SetStateMachine(StateMachine stateMachine)
+    public abstract class State
     {
-        this.stateMachine = stateMachine;
-    }
+        public StateMachine stateMachine { get; private set; }
 
-    public virtual void Init()
-    {
-    }
+        public void SetStateMachine(StateMachine stateMachine)
+        {
+            this.stateMachine = stateMachine;
+        }
 
-    public virtual void Enter()
-    {
-        RegisterInput();
-    }
+        public virtual void Init()
+        {
+        }
 
-    public virtual void Exit()
-    {
-        UnregisterInput();
-    }
+        public virtual void Enter()
+        {
+            RegisterInput();
+        }
 
-    public virtual void PreUpdate()
-    {
-    }
+        public virtual void Exit()
+        {
+            UnregisterInput();
+        }
 
-    public virtual void Update()
-    {
-    }
+        public virtual void Resume()
+        {
+            RegisterInput();
+        }
 
-    public virtual void LateUpdate()
-    {
-    }
+        public virtual void Pause()
+        {
+            UnregisterInput();
+        }
 
-    public virtual void FixedUpdate()
-    {
-    }
+        public virtual void PreUpdate()
+        {
+        }
 
-    public virtual void RegisterInput() 
-    {
-    }
+        public virtual void Update()
+        {
+        }
 
-    public virtual void UnregisterInput() 
-    {
+        public virtual void LateUpdate()
+        {
+        }
+
+        public virtual void FixedUpdate()
+        {
+        }
+
+        public virtual void RegisterInput()
+        {
+        }
+
+        public virtual void UnregisterInput()
+        {
+        }
     }
 }

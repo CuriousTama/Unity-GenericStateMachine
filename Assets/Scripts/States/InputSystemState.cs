@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine.InputSystem;
 using UnityEngine;
 using TMPro;
+using GenericStateMachine;
 
 public class InputSystemState : State 
 {
