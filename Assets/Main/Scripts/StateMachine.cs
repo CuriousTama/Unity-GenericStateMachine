@@ -94,7 +94,7 @@ namespace GenericStateMachine
                 }
             });
 
-            m_possibleStates = possibleStates.Select((state) => state.GetClass().AssemblyQualifiedName).ToList();
+            m_possibleStates = possibleStates.Select((state) => state != null ? state.GetClass().AssemblyQualifiedName : "").ToList();
             m_startingState = startingState == null ? null : startingState.GetClass().AssemblyQualifiedName;
 
             // Can't have cachingStates and canHaveAnyStates variables to true at the same time.
@@ -110,7 +110,7 @@ namespace GenericStateMachine
                 CreateCache();
 
             // Launch the starting state.
-            if (m_startingState != null)
+            if (string.IsNullOrEmpty(m_startingState) == false)
                 ChangeState(Type.GetType(m_startingState));
 
             // Don't want to block the first state even if the changingStateSkip is true.
@@ -197,8 +197,8 @@ namespace GenericStateMachine
 
             if (cachingStates)
             {
-                if (m_States.Where((state) => state == m_currentState).Count() > 1)                
-                    m_currentState?.Resume();                
+                if (m_States.Where((state) => state == m_currentState).Count() > 1)
+                    m_currentState?.Resume();
                 else
                 {
                     m_currentState?.SetStateMachine(this);
@@ -227,15 +227,17 @@ namespace GenericStateMachine
 
             if (cachingStates)
             {
-                if (m_States.Where((state) => state == m_currentState).Count() > 1)                
-                    m_currentState?.Pause();                
-                else                
-                    m_currentState?.Exit();                
+                if (m_States.Where((state) => state == m_currentState).Count() > 1)
+                    m_currentState?.Pause();
+                else
+                    m_currentState?.Exit();
             }
-            else            
+            else
                 m_currentState?.Exit();
 
-            m_States.RemoveAt(m_States.Count - 1);
+            if (m_States.Count() > 0)
+                m_States.RemoveAt(m_States.Count - 1);
+
             m_currentState = m_States.LastOrDefault();
 
             m_currentState?.Resume();
@@ -262,9 +264,61 @@ namespace GenericStateMachine
 
 
 
+        public int GetStatesCount()
+        {
+            if (stateMachineType == Mode.Single)
+                return (m_currentState == null) ? 0 : 1;
 
+            if (stateMachineType == Mode.Stackable)
+                return m_States.Count;
 
+            return 0;
+        }
 
+        public List<string> GetStatesAsString()
+        {
+            List<string> list = new List<string>();
+
+            if (stateMachineType == Mode.Single)
+            {
+                if (m_currentState != null)
+                    list.Add(m_currentState.GetType().Name);
+            }
+            else if (stateMachineType == Mode.Stackable)
+            {
+                foreach (State state in m_States)
+                {
+                    list.Add(state.GetType().Name);
+                }
+            }
+
+            return list;
+        }
+
+        public List<Type> GetStatesAsType()
+        {
+            List<Type> list = new List<Type>();
+
+            if (stateMachineType == Mode.Single)
+            {
+                if (m_currentState != null)
+                    list.Add(m_currentState.GetType());
+            }
+            else if (stateMachineType == Mode.Stackable)
+            {
+                foreach (State state in m_States)
+                {
+                    list.Add(state.GetType());
+                }
+            }
+
+            return list;
+        }
+
+        public State GetCurrentState()
+        {
+            return m_currentState;
+        }
 
 
 
