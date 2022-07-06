@@ -20,6 +20,7 @@ namespace GenericStateMachine
             Stackable
         }
 
+        #region variables
         [Space(10f)]
         [Tooltip("Reference to the set of variables to use.")]
         public StateVariables variables;
@@ -60,8 +61,10 @@ namespace GenericStateMachine
         // sources of benchmark  (https://stackoverflow.com/questions/353342/performance-of-object-gettype/353435#353435).
         [SerializeField, HideInInspector] private List<string> m_possibleStates = new List<string>();
         [SerializeField, HideInInspector] private string m_startingState;
+        #endregion
 
 
+        #region private Methods
 #if UNITY_EDITOR
         private void OnValidate()
         {
@@ -82,7 +85,6 @@ namespace GenericStateMachine
                 AwakeEditor();
                 m_onCreate = false;
             }
-
 
             // Reset to null values that are not derived from "State" class.
             possibleStates.ForEach((state) =>
@@ -142,189 +144,6 @@ namespace GenericStateMachine
             m_currentState?.FixedUpdate();
         }
 
-
-        /// <summary>
-        /// Single mode : Change the current state.
-        /// Stackable mode : Same as AddState(type).
-        /// </summary>
-        /// <param name="type">The type of the state you want.</param>
-        /// <returns>The new state.</returns>
-        public State ChangeState(Type type)
-        {
-            if (stateMachineType == Mode.Stackable)
-                return AddState(type);
-
-            if (CheckType(type) == false)
-                return null;
-
-            m_currentState?.Exit();
-
-            // Get the cached state or create state.
-            if (cachingStates)
-                m_currentState = m_stateCache.Where((state) => state.GetType() == type).First();
-            else
-                m_currentState = System.Activator.CreateInstance(type) as State;
-
-            m_currentState?.SetStateMachine(this);
-            m_currentState?.Init();
-            m_currentState?.Enter();
-
-            if (changingStateSkip)
-                m_blockingNextFrame = true;
-
-            return m_currentState;
-        }
-
-        public State AddState(Type type)
-        {
-            if (stateMachineType == Mode.Single)
-                return ChangeState(type);
-
-            if (CheckType(type) == false)
-                return null;
-
-
-            State newState;
-            if (cachingStates)
-                newState = m_stateCache.Where((state) => state.GetType() == type).First();
-            else
-                newState = System.Activator.CreateInstance(type) as State;
-
-            m_currentState?.Pause();
-
-            m_States.Add(newState);
-            m_currentState = newState;
-
-            if (cachingStates)
-            {
-                if (m_States.Where((state) => state == m_currentState).Count() > 1)
-                    m_currentState?.Resume();
-                else
-                {
-                    m_currentState?.SetStateMachine(this);
-                    m_currentState?.Init();
-                    m_currentState?.Enter();
-                }
-            }
-            else
-            {
-                m_currentState?.SetStateMachine(this);
-                m_currentState?.Init();
-                m_currentState?.Enter();
-            }
-
-            return m_currentState;
-        }
-
-        public State RemoveState()
-        {
-            if (stateMachineType == Mode.Single)
-            {
-                m_currentState?.Exit();
-                m_currentState = null;
-                return m_currentState;
-            }
-
-            if (cachingStates)
-            {
-                if (m_States.Where((state) => state == m_currentState).Count() > 1)
-                    m_currentState?.Pause();
-                else
-                    m_currentState?.Exit();
-            }
-            else
-                m_currentState?.Exit();
-
-            if (m_States.Count() > 0)
-                m_States.RemoveAt(m_States.Count - 1);
-
-            m_currentState = m_States.LastOrDefault();
-
-            m_currentState?.Resume();
-
-            return m_currentState;
-        }
-
-        public void Clear()
-        {
-            if (stateMachineType == Mode.Single)
-                m_currentState?.Exit();
-            else if (stateMachineType == Mode.Stackable)
-            {
-                for (int i = m_States.Count - 1; i >= 0; i--)
-                    m_States[i]?.Exit();
-
-                m_States.Clear();
-            }
-
-            m_currentState = null;
-        }
-
-
-
-
-
-        public int GetStatesCount()
-        {
-            if (stateMachineType == Mode.Single)
-                return (m_currentState == null) ? 0 : 1;
-
-            if (stateMachineType == Mode.Stackable)
-                return m_States.Count;
-
-            return 0;
-        }
-
-        public List<string> GetStatesAsString()
-        {
-            List<string> list = new List<string>();
-
-            if (stateMachineType == Mode.Single)
-            {
-                if (m_currentState != null)
-                    list.Add(m_currentState.GetType().Name);
-            }
-            else if (stateMachineType == Mode.Stackable)
-            {
-                foreach (State state in m_States)
-                {
-                    list.Add(state.GetType().Name);
-                }
-            }
-
-            return list;
-        }
-
-        public List<Type> GetStatesAsType()
-        {
-            List<Type> list = new List<Type>();
-
-            if (stateMachineType == Mode.Single)
-            {
-                if (m_currentState != null)
-                    list.Add(m_currentState.GetType());
-            }
-            else if (stateMachineType == Mode.Stackable)
-            {
-                foreach (State state in m_States)
-                {
-                    list.Add(state.GetType());
-                }
-            }
-
-            return list;
-        }
-
-        public State GetCurrentState()
-        {
-            return m_currentState;
-        }
-
-
-
-
-
-
         private void AwakeEditor()
         {
             StateVariables variables = gameObject.AddComponent<StateVariables>();
@@ -372,5 +191,223 @@ namespace GenericStateMachine
 
             return true;
         }
+        #endregion
+
+
+        #region Public Methods
+        /// <summary>
+        /// <para> Single mode : Change the current state. </para>
+        /// <para> Stackable mode : Same as AddState(type). </para>
+        /// </summary>
+        /// <param name="type">The type of the state you want.</param>
+        /// <returns>The new state.</returns>
+        public State ChangeState(Type type)
+        {
+            if (stateMachineType == Mode.Stackable)
+                return AddState(type);
+
+            if (CheckType(type) == false)
+                return null;
+
+            m_currentState?.Exit();
+
+            // Get the cached state or create state.
+            if (cachingStates)
+                m_currentState = m_stateCache.Where((state) => state.GetType() == type).First();
+            else
+                m_currentState = System.Activator.CreateInstance(type) as State;
+
+            m_currentState?.SetStateMachine(this);
+            m_currentState?.Init();
+            m_currentState?.Enter();
+
+            if (changingStateSkip)
+                m_blockingNextFrame = true;
+
+            return m_currentState;
+        }
+
+        /// <summary>
+        /// <para> Single mode : Same as ChangeState(type). </para>
+        /// <para> Stackable mode : Set the current state to pause and add a new one of "type". </para>
+        /// If cache activated resume if it already is in the previous states.
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns>The new state.</returns>
+        public State AddState(Type type)
+        {
+            if (stateMachineType == Mode.Single)
+                return ChangeState(type);
+
+            if (CheckType(type) == false)
+                return null;
+
+
+            State newState;
+            if (cachingStates)
+                newState = m_stateCache.Where((state) => state.GetType() == type).First();
+            else
+                newState = System.Activator.CreateInstance(type) as State;
+
+            m_currentState?.Pause();
+
+            m_States.Add(newState);
+            m_currentState = newState;
+
+            if (cachingStates)
+            {
+                if (m_States.Where((state) => state == m_currentState).Count() > 1)
+                    m_currentState?.Resume();
+                else
+                {
+                    m_currentState?.SetStateMachine(this);
+                    m_currentState?.Init();
+                    m_currentState?.Enter();
+                }
+            }
+            else
+            {
+                m_currentState?.SetStateMachine(this);
+                m_currentState?.Init();
+                m_currentState?.Enter();
+            }
+
+            return m_currentState;
+        }
+
+        /// <summary>
+        /// <para> Single mode : Set the state to null. </para>
+        /// <para> Stackable mode : Remove the current state and resume the previous one. </para>
+        /// </summary>
+        /// <returns>The new running state.</returns>
+        public State RemoveState()
+        {
+            if (stateMachineType == Mode.Single)
+            {
+                m_currentState?.Exit();
+                m_currentState = null;
+                return m_currentState;
+            }
+
+            if (cachingStates)
+            {
+                if (m_States.Where((state) => state == m_currentState).Count() > 1)
+                    m_currentState?.Pause();
+                else
+                    m_currentState?.Exit();
+            }
+            else
+                m_currentState?.Exit();
+
+            if (m_States.Count() > 0)
+                m_States.RemoveAt(m_States.Count - 1);
+
+            m_currentState = m_States.LastOrDefault();
+
+            m_currentState?.Resume();
+
+            return m_currentState;
+        }
+
+        /// <summary>
+        /// <para> Single mode : Set the state to null. </para>
+        /// <para> Stackable mode : Remove all states and set the state to null. </para>
+        /// </summary>
+        public void Clear()
+        {
+            if (stateMachineType == Mode.Single)
+                m_currentState?.Exit();
+            else if (stateMachineType == Mode.Stackable)
+            {
+                for (int i = m_States.Count - 1; i >= 0; i--)
+                    m_States[i]?.Exit();
+
+                m_States.Clear();
+            }
+
+            m_currentState = null;
+        }
+
+        /// <summary>
+        /// Get total number of states
+        /// </summary>
+        /// <returns>
+        /// <para> Single mode : If no current state 0 else 1. </para>
+        /// <para> Stackable mode : number of states. </para>
+        /// </returns>
+        public int GetStatesCount()
+        {
+            if (stateMachineType == Mode.Single)
+                return (m_currentState == null) ? 0 : 1;
+
+            if (stateMachineType == Mode.Stackable)
+                return m_States.Count;
+
+            return 0;
+        }
+
+        /// <summary>
+        /// Get states list
+        /// </summary>
+        /// <returns>
+        /// A list with all state as string (in order)
+        /// </returns>
+        public List<string> GetStatesAsString()
+        {
+            List<string> list = new List<string>();
+
+            if (stateMachineType == Mode.Single)
+            {
+                if (m_currentState != null)
+                    list.Add(m_currentState.GetType().Name);
+            }
+            else if (stateMachineType == Mode.Stackable)
+            {
+                foreach (State state in m_States)
+                {
+                    list.Add(state.GetType().Name);
+                }
+            }
+
+            return list;
+        }
+
+        /// <summary>
+        /// Get state list
+        /// </summary>
+        /// <returns>
+        /// A list with all states as System.Type (in order)
+        /// </returns>
+        public List<Type> GetStatesAsType()
+        {
+            List<Type> list = new List<Type>();
+
+            if (stateMachineType == Mode.Single)
+            {
+                if (m_currentState != null)
+                    list.Add(m_currentState.GetType());
+            }
+            else if (stateMachineType == Mode.Stackable)
+            {
+                foreach (State state in m_States)
+                {
+                    list.Add(state.GetType());
+                }
+            }
+
+            return list;
+        }
+
+        /// <summary>
+        /// Get the current running state
+        /// </summary>
+        /// <returns>
+        /// The current running state
+        /// </returns>
+        public State GetCurrentState()
+        {
+            return m_currentState;
+        }
+        #endregion
     }
 }

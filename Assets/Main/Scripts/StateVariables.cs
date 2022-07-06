@@ -7,6 +7,12 @@ namespace GenericStateMachine
     {
         public List<StateVariable> variables;
 
+        /// <summary>
+        /// Get variable of type T
+        /// </summary>
+        /// <typeparam name="T">Type of the object</typeparam>
+        /// <param name="name">Name of the wanted value</param>
+        /// <returns>The value casted as T if possible, return null if name not found or not the castable</returns>
         public T Get<T>(string name) where T : Object
         {
             foreach (StateVariable variable in variables)
