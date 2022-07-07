@@ -8,6 +8,8 @@ This state machine is generic because of the possibility to drag and drop script
 
 In code you juste need to give a  type to a function for it to change or add the state of the said type state.
 
+You can have access to variables from states via a componant attatched to the state machine.
+
 <br> </br>
 The state machine have currently two modes :  
 
