@@ -16,6 +16,7 @@ public class Jumping_Jumping : State
         data.stateText.text = "Jump";
         data.animator.SetTrigger("JumpStart");
         data.jumped = true;
+        time = 0f;
     }
 
     public override void LateUpdate()

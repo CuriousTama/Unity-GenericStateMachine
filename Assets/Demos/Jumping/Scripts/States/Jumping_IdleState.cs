@@ -15,6 +15,8 @@ public class Jumping_IdleState : State
         data = stateMachine.variables.Get<JumpingStuff>("Data");
         data.stateText.text = "Idle";
         data.animator.SetTrigger("Idle");
+        jumpPressed = false;
+        tpPressed = false;
     }
 
     public override void Update()
