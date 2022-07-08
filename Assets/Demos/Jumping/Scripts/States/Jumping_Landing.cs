@@ -19,7 +19,7 @@ public class Jumping_Landing : State
     public override void Update()
     {
         if (data.landAnimFinished)
-            stateMachine.ChangeState(typeof(Jumping_IdleState));
+            stateMachine.ChangeState<Jumping_IdleState>();
     }
 
     public override void Exit()
