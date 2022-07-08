@@ -1,8 +1,18 @@
 namespace GenericStateMachine
 {
+    public enum StateStatus
+    {
+        None,
+        Playing,
+        Stopped,
+        Paused,
+    }
+
+
     public abstract class State
     {
         public StateMachine stateMachine { get; private set; }
+        public StateStatus status { get; private set; }
 
         public void SetStateMachine(StateMachine stateMachine)
         {
@@ -19,37 +29,41 @@ namespace GenericStateMachine
 
         /// <summary>
         /// <para> Called after Init. </para>
-        /// <para> Need to keep base.Enter() it call RegisterInput() </para>
+        /// <para> Need to keep base.Enter() it call RegisterInput() and update status </para>
         /// </summary>
         public virtual void Enter()
         {
+            status = StateStatus.Playing;
             RegisterInput();
         }
 
         /// <summary>
         /// <para> Called when the state is destroyed. </para>
-        /// <para> Need to keep base.Exit() it call UnregisterInput() </para>
+        /// <para> Need to keep base.Exit() it call UnregisterInput() and update status </para>
         /// </summary>
         public virtual void Exit()
         {
+            status = StateStatus.Stopped;
             UnregisterInput();
         }
 
         /// <summary>
         /// <para> Called when the is resumed (stacked beaviour). </para>
-        /// <para> Need to keep base.Resume() it call RegisterInput() </para>
+        /// <para> Need to keep base.Resume() it call RegisterInput() and update status </para>
         /// </summary>
         public virtual void Resume()
         {
+            status = StateStatus.Playing;
             RegisterInput();
         }
 
         /// <summary>
         /// <para> Called when the is paused (stacked beaviour). </para>
-        /// <para> Need to keep base.Pause() it call UnregisterInput() </para>
+        /// <para> Need to keep base.Pause() it call UnregisterInput() and update status </para>
         /// </summary>
         public virtual void Pause()
         {
+            status = StateStatus.Paused;
             UnregisterInput();
         }
 
