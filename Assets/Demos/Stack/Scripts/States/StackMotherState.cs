@@ -18,4 +18,10 @@ public class StackMotherState : State
         base.Exit();
         stateMachine.variables.Get<TMPro.TMP_Text>("TimeText").text = "-- seconds";
     }
+
+    public override void Enter()
+    {
+        base.Enter();
+        timer = 0f;
+    }
 }

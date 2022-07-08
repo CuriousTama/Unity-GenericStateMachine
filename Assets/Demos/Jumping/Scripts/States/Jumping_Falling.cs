@@ -13,6 +13,7 @@ public class Jumping_Falling : State
         base.Enter();
         data = stateMachine.variables.Get<JumpingStuff>("Data");
         data.stateText.text = "falling";
+        timeFromJump = 0.25f;
 
         if (data.jumped == false)
         {

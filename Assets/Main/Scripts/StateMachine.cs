@@ -162,6 +162,8 @@ namespace GenericStateMachine
             {
                 m_stateCache[i] = System.Activator.CreateInstance(Type.GetType(statesToCreate[i])) as State;
                 m_stateCache[i].SetStateMachine(this);
+                m_stateCache[i].Init();
+
             }
         }
 
@@ -245,8 +247,13 @@ namespace GenericStateMachine
             else
                 m_currentState = System.Activator.CreateInstance(type) as State;
 
-            m_currentState?.SetStateMachine(this);
-            m_currentState?.Init();
+
+            if (!cachingStates)
+            {
+                m_currentState?.SetStateMachine(this);
+                m_currentState?.Init();
+            }
+
             m_currentState?.Enter();
 
             if (changingStateSkip)
@@ -277,8 +284,13 @@ namespace GenericStateMachine
             else
                 m_currentState = new T();
 
-            m_currentState?.SetStateMachine(this);
-            m_currentState?.Init();
+
+            if (!cachingStates)
+            {
+                m_currentState?.SetStateMachine(this);
+                m_currentState?.Init();
+            }
+
             m_currentState?.Enter();
 
             if (changingStateSkip)
@@ -321,11 +333,7 @@ namespace GenericStateMachine
                 if (m_States.Where((state) => state == m_currentState).Count() > 1)
                     m_currentState?.Resume();
                 else
-                {
-                    m_currentState?.SetStateMachine(this);
-                    m_currentState?.Init();
                     m_currentState?.Enter();
-                }
             }
             else
             {
@@ -369,11 +377,7 @@ namespace GenericStateMachine
                 if (m_States.Where((state) => state == m_currentState).Count() > 1)
                     m_currentState?.Resume();
                 else
-                {
-                    m_currentState?.SetStateMachine(this);
-                    m_currentState?.Init();
                     m_currentState?.Enter();
-                }
             }
             else
             {
