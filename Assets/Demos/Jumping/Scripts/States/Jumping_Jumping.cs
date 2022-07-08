@@ -26,7 +26,7 @@ public class Jumping_Jumping : State
             return;
 
         data.rb.AddForce(Vector3.up * data.jumpPower, ForceMode.Impulse);
-        stateMachine.ChangeState(typeof(Jumping_Falling));
+        stateMachine.ChangeState<Jumping_Falling>();
     }
 
     public override void Exit()

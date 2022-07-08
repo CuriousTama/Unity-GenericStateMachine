@@ -191,10 +191,38 @@ namespace GenericStateMachine
 
             return true;
         }
+
+        private bool CheckType<T>()
+        {
+            // Check if type is derived from "State" class.
+            if (!typeof(State).IsAssignableFrom(typeof(T)))
+            {
+                Debug.LogWarning(typeof(T).Name + " is not a state (IState interface), ChangeState() canceled.");
+                return false;
+            }
+
+            // Check if the state is in the list of possible states (if canHaveAnyStates is false).
+            if (!canHaveAnyStates && m_possibleStates.Where((state) => state != null && state == typeof(T).AssemblyQualifiedName).FirstOrDefault() == null)
+            {
+                Debug.LogWarning(typeof(T).Name + " is not repetoried in the GameObject, ChangeState() canceled.");
+                return false;
+            }
+
+            // Check if the state is in the list of cached states (if canHaveAnyStates is false).
+            // Happen only if you change possibleStates list in runtime (can only be changed in inspector).
+            if (cachingStates && m_stateCache.Where((state) => state != null && state.GetType() == typeof(T)).FirstOrDefault() == null)
+            {
+                Debug.LogWarning(typeof(T).Name + " is not found in the cache, ChangeState() canceled.");
+                return false;
+            }
+
+            return true;
+        }
         #endregion
 
 
         #region Public Methods
+        #region ChangeState
         /// <summary>
         /// <para> Single mode : Change the current state. </para>
         /// <para> Stackable mode : Same as AddState(type). </para>
@@ -228,11 +256,45 @@ namespace GenericStateMachine
         }
 
         /// <summary>
+        /// <para> Single mode : Change the current state. </para>
+        /// <para> Stackable mode : Same as AddState(type). </para>
+        /// </summary>
+        /// <typeparam name="T">The type of the state you want.</typeparam>
+        /// <returns>The new state.</returns>
+        public State ChangeState<T>() where T : State, new()
+        {
+            if (stateMachineType == Mode.Stackable)
+                return AddState<T>();
+
+            if (CheckType<T>() == false)
+                return null;
+
+            m_currentState?.Exit();
+
+            // Get the cached state or create state.
+            if (cachingStates)
+                m_currentState = m_stateCache.Where((state) => state.GetType() == typeof(T)).First();
+            else
+                m_currentState = new T();
+
+            m_currentState?.SetStateMachine(this);
+            m_currentState?.Init();
+            m_currentState?.Enter();
+
+            if (changingStateSkip)
+                m_blockingNextFrame = true;
+
+            return m_currentState;
+        }
+        #endregion
+
+        #region AddState
+        /// <summary>
         /// <para> Single mode : Same as ChangeState(type). </para>
         /// <para> Stackable mode : Set the current state to pause and add a new one of "type". </para>
         /// If cache activated resume if it already is in the previous states.
         /// </summary>
-        /// <param name="type"></param>
+        /// <param name="type">The type of the state you want to add.</param>
         /// <returns>The new state.</returns>
         public State AddState(Type type)
         {
@@ -274,6 +336,55 @@ namespace GenericStateMachine
 
             return m_currentState;
         }
+
+        /// <summary>
+        /// <para> Single mode : Same as ChangeState(type). </para>
+        /// <para> Stackable mode : Set the current state to pause and add a new one of "type". </para>
+        /// If cache activated resume if it already is in the previous states.
+        /// </summary>
+        /// <typeparam name="T">The type of the state you want to add.</typeparam>
+        /// <returns>The new state.</returns>
+        public State AddState<T>() where T : State, new()
+        {
+            if (stateMachineType == Mode.Single)
+                return ChangeState<T>();
+
+            if (CheckType<T>() == false)
+                return null;
+
+
+            State newState;
+            if (cachingStates)
+                newState = m_stateCache.Where((state) => state.GetType() == typeof(T)).First();
+            else
+                newState = new T();
+
+            m_currentState?.Pause();
+
+            m_States.Add(newState);
+            m_currentState = newState;
+
+            if (cachingStates)
+            {
+                if (m_States.Where((state) => state == m_currentState).Count() > 1)
+                    m_currentState?.Resume();
+                else
+                {
+                    m_currentState?.SetStateMachine(this);
+                    m_currentState?.Init();
+                    m_currentState?.Enter();
+                }
+            }
+            else
+            {
+                m_currentState?.SetStateMachine(this);
+                m_currentState?.Init();
+                m_currentState?.Enter();
+            }
+
+            return m_currentState;
+        }
+        #endregion
 
         /// <summary>
         /// <para> Single mode : Set the state to null. </para>
@@ -327,6 +438,29 @@ namespace GenericStateMachine
 
             m_currentState = null;
         }
+
+        public bool Pause()
+        {
+            if (m_currentState != null && m_currentState.status == StateStatus.Playing)
+            {
+                m_currentState?.Pause();
+                return true;
+            }
+
+            return false;
+        }
+
+        public bool Resume()
+        {
+            if (m_currentState != null && m_currentState.status == StateStatus.Paused)
+            {
+                m_currentState?.Resume();
+                return true;
+            }
+
+            return false;
+        }
+
 
         /// <summary>
         /// Get total number of states

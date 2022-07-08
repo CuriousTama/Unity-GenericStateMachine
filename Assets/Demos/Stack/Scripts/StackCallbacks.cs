@@ -9,7 +9,7 @@ public class StackCallbacks : MonoBehaviour
 
     public void AddStateA()
     {
-        stateMachine.AddState(typeof(StackStateA));
+        stateMachine.AddState<StackStateA>();
         printer.hasChange = true;
     }
 
