@@ -82,4 +82,6 @@ You can have access to the state machine owner of the state via the public varia
 
 ## History
 
-description here.
+The project was born out after watching some codes and observed people and also myself, alwase create a new state machine script for every behaviour (principaly when caching states).
+
+This project was create by myself after 9 months of practice in c# and unity.
