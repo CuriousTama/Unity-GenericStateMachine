@@ -30,8 +30,8 @@ First you will need to add the component "StateMachine" to the gameObject you wa
 
 <img src="https://github.com/Tama-sama/Unity-GenericStateMachine/blob/Description/Docs/StateMachine.PNG" height="250">  
 
-- <ins>**Variables**</ins> : A referance to the StateVariables component ([see here](https://github.com/Tama-sama/Unity-GenericStateMachine/tree/Description#state-variables)) 
-- <ins>**State Machine Type**</ins> : The state machine type (single or stack-based). ([see here](https://github.com/Tama-sama/Unity-GenericStateMachine/tree/Description#how-is-this-state-machine-generic-))
+- <ins>**Variables**</ins> : A referance to the StateVariables component ([see here](#state-variables)) 
+- <ins>**State Machine Type**</ins> : The state machine type (single or stack-based). ([see here](#how-is-this-state-machine-generic-))
 - <ins>**Changing state skip**</ins> : If true, when changing state the state machine skip the end of the current frame.
 - <ins>**Can have any states**</ins> : If true, this state machine can have any kind of state (Can't be true at same time as caching).
 - <ins>**Caching states**</ins> : If true, states in <ins>**Possible states**</ins> are going to be created at awake of the state machine (not active).
