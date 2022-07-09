@@ -21,7 +21,7 @@ namespace GenericStateMachine
 
         /// <summary>
         /// <para> Called when the state is created. </para>
-        /// <para> Can get ride of base.Init() </para>
+        /// <para> Can get ride of base.Init(). </para>
         /// </summary>
         public virtual void Init()
         {
@@ -29,7 +29,7 @@ namespace GenericStateMachine
 
         /// <summary>
         /// <para> Called after Init. </para>
-        /// <para> Need to keep base.Enter() it call RegisterInput() and update status </para>
+        /// <para> Need to keep base.Enter() it call RegisterInput() and update status. </para>
         /// </summary>
         public virtual void Enter()
         {
@@ -39,7 +39,7 @@ namespace GenericStateMachine
 
         /// <summary>
         /// <para> Called when the state is destroyed. </para>
-        /// <para> Need to keep base.Exit() it call UnregisterInput() and update status </para>
+        /// <para> Need to keep base.Exit() it call UnregisterInput() and update status. </para>
         /// </summary>
         public virtual void Exit()
         {
@@ -49,7 +49,7 @@ namespace GenericStateMachine
 
         /// <summary>
         /// <para> Called when the is resumed (stacked beaviour). </para>
-        /// <para> Need to keep base.Resume() it call RegisterInput() and update status </para>
+        /// <para> Need to keep base.Resume() it call RegisterInput() and update status. </para>
         /// </summary>
         public virtual void Resume()
         {
@@ -59,7 +59,7 @@ namespace GenericStateMachine
 
         /// <summary>
         /// <para> Called when the is paused (stacked beaviour). </para>
-        /// <para> Need to keep base.Pause() it call UnregisterInput() and update status </para>
+        /// <para> Need to keep base.Pause() it call UnregisterInput() and update status. </para>
         /// </summary>
         public virtual void Pause()
         {
@@ -69,7 +69,7 @@ namespace GenericStateMachine
 
         /// <summary>
         /// <para> Called before the update. (each frame) </para>
-        /// <para> Can get ride of base.PreUpdate() </para>
+        /// <para> Can get ride of base.PreUpdate(). </para>
         /// </summary>
         public virtual void PreUpdate()
         {
@@ -77,7 +77,7 @@ namespace GenericStateMachine
 
         /// <summary>
         /// <para> Called each frame. </para>
-        /// <para> Can get ride of base.Update() </para>
+        /// <para> Can get ride of base.Update(). </para>
         /// </summary>
         public virtual void Update()
         {
@@ -85,31 +85,31 @@ namespace GenericStateMachine
 
         /// <summary>
         /// <para> Called after the update. (each frame) </para>
-        /// <para> Can get ride of base.LateUpdate() </para>
+        /// <para> Can get ride of base.LateUpdate(). </para>
         /// </summary>
         public virtual void LateUpdate()
         {
         }
 
         /// <summary>
-        /// <para> Called each time the physic is updated </para>
-        /// <para> Can get ride of base.FixedUpdate() </para>
+        /// <para> Called each time the physic is updated. </para>
+        /// <para> Can get ride of base.FixedUpdate(). </para>
         /// </summary>
         public virtual void FixedUpdate()
         {
         }
 
         /// <summary>
-        /// <para> Called in Enter() and Resume() </para>
-        /// <para> Can get ride of base.RegisterInput() </para>
+        /// <para> Called in Enter() and Resume(). </para>
+        /// <para> Can get ride of base.RegisterInput(). </para>
         /// </summary>
         public virtual void RegisterInput()
         {
         }
 
         /// <summary>
-        /// <para> Called in Exit() and Pause() </para>
-        /// <para> Can get ride of base.RegisterInput() </para>
+        /// <para> Called in Exit() and Pause(). </para>
+        /// <para> Can get ride of base.RegisterInput(). </para>
         /// </summary>
         public virtual void UnregisterInput()
         {

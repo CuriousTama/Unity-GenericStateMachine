@@ -443,6 +443,10 @@ namespace GenericStateMachine
             m_currentState = null;
         }
 
+        /// <summary>
+        /// Pause the current running state.
+        /// </summary>
+        /// <returns>If the state was playing and well paused.</returns>
         public bool Pause()
         {
             if (m_currentState != null && m_currentState.status == StateStatus.Playing)
@@ -454,6 +458,10 @@ namespace GenericStateMachine
             return false;
         }
 
+        /// <summary>
+        /// Resume the current running state.
+        /// </summary>
+        /// <returns>If the state was paused and well resumed.</returns>
         public bool Resume()
         {
             if (m_currentState != null && m_currentState.status == StateStatus.Paused)
@@ -467,7 +475,7 @@ namespace GenericStateMachine
 
 
         /// <summary>
-        /// Get total number of states
+        /// Get total number of states.
         /// </summary>
         /// <returns>
         /// <para> Single mode : If no current state 0 else 1. </para>
@@ -485,10 +493,10 @@ namespace GenericStateMachine
         }
 
         /// <summary>
-        /// Get states list
+        /// Get states list.
         /// </summary>
         /// <returns>
-        /// A list with all state as string (in order)
+        /// A list with all state as string (in order).
         /// </returns>
         public List<string> GetStatesAsString()
         {
@@ -511,10 +519,10 @@ namespace GenericStateMachine
         }
 
         /// <summary>
-        /// Get state list
+        /// Get state list.
         /// </summary>
         /// <returns>
-        /// A list with all states as System.Type (in order)
+        /// A list with all states as System.Type (in order).
         /// </returns>
         public List<Type> GetStatesAsType()
         {
@@ -537,10 +545,10 @@ namespace GenericStateMachine
         }
 
         /// <summary>
-        /// Get the current running state
+        /// Get the current running state.
         /// </summary>
         /// <returns>
-        /// The current running state
+        /// The current running state.
         /// </returns>
         public State GetCurrentState()
         {
