@@ -28,7 +28,7 @@ Scripts are inside "GenericStateMachine" namespace.
 ### State Machine
 First you will need to add the component "StateMachine" to the gameObject you want.  
 
-<img src="https://github.com/Tama-sama/Unity-GenericStateMachine/blob/Description/Docs/StateMachine.PNG" height="250">  
+<img src="https://github.com/Tama-sama/Unity-GenericStateMachine/blob/main/Docs/StateMachine.PNG" height="250">  
 
 - <ins>**Variables**</ins> : A referance to the StateVariables component ([see here](#state-variables)) 
 - <ins>**State Machine Type**</ins> : The state machine type (single or stack-based). ([see here](#how-is-this-state-machine-generic-))
@@ -122,8 +122,8 @@ Get the current running state.
 This component is automatically added with State machine, it can be removed and place in another Object and re-linked.
 State Variables component is here to give access at scripts / objects for states.
 
-<img src="https://github.com/Tama-sama/Unity-GenericStateMachine/blob/Description/Docs/StateVariables.PNG" height="130"> <!-- -->
-<img src="https://github.com/Tama-sama/Unity-GenericStateMachine/blob/Description/Docs/Set_StateVariable.gif" height="250">  
+<img src="https://github.com/Tama-sama/Unity-GenericStateMachine/blob/main/Docs/StateVariables.PNG" height="130"> <!-- -->
+<img src="https://github.com/Tama-sama/Unity-GenericStateMachine/blob/main/Docs/Set_StateVariable.gif" height="250">  
 
 
 It is basically a list with a name and a reference of any type of object.
