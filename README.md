@@ -30,14 +30,94 @@ First you will need to add the component "StateMachine" to the gameObject you wa
 
 <img src="https://github.com/Tama-sama/Unity-GenericStateMachine/blob/Description/Docs/StateMachine.PNG" height="250">  
 
-- <ins>**Variables**</ins> : A referance to the StateVariables component (see below) 
-- <ins>**State Machine Type**</ins> : The state machine type (single or stack-based). (see upper)
+- <ins>**Variables**</ins> : A referance to the StateVariables component ([see here](https://github.com/Tama-sama/Unity-GenericStateMachine/tree/Description#state-variables)) 
+- <ins>**State Machine Type**</ins> : The state machine type (single or stack-based). ([see here](https://github.com/Tama-sama/Unity-GenericStateMachine/tree/Description#how-is-this-state-machine-generic-))
 - <ins>**Changing state skip**</ins> : If true, when changing state the state machine skip the end of the current frame.
 - <ins>**Can have any states**</ins> : If true, this state machine can have any kind of state (Can't be true at same time as caching).
 - <ins>**Caching states**</ins> : If true, states in <ins>**Possible states**</ins> are going to be created at awake of the state machine (not active).
 - <ins>**Starting state**</ins> : This state will automatically be set at the awake of the state machine (can be null).
 - <ins>**Possible states**</ins> : Used with <ins>**Caching states**</ins> (for knowing wich state need to be cached) and <ins>**Can have any states**</ins> (if false)
 
+### State Machine Public Methods
+
+#### <ins>**ChangeState**</ins>
+```C#
+public State ChangeState(Type type);
+public State ChangeState<T>();
+```
+Single mode : Change the current state.  
+Stackable mode : Same as AddState(type).  
+***Return :*** The new state
+<br> </br>
+#### <ins>**AddState**</ins>
+```C#
+public State AddState(Type type);
+public State AddState<T>();
+```
+Single mode : Same as ChangeState(type).  
+Stackable mode : Set the current state to pause and add a new one of "type".  
+If cache activated resume if it already is in the previous states.  
+***Return :*** The new state
+<br> </br>
+#### <ins>**RemoveState**</ins>
+```C#
+public State RemoveState();
+```
+Single mode : Set the state to null.  
+Stackable mode : Remove the current state and resume the previous one.  
+***Return :*** The new running state.
+<br> </br>
+#### <ins>**Clear**</ins>
+```C#
+public void Clear();
+```
+Single mode : Set the state to null.  
+Stackable mode : Remove all states and set the state to null.  
+<br> </br>
+#### <ins>**Pause**</ins>
+```C#
+public bool Pause();
+```
+Pause the current running state.  
+***Return :*** If the state was playing and well paused.
+<br> </br>
+#### <ins>**Resume**</ins>
+```C#
+public bool Resume();
+```
+Resume the current running state.  
+***Return :*** If the state was paused and well resumed.
+<br> </br>
+#### <ins>**GetStatesCount**</ins>
+```C#
+public int GetStatesCount();
+```
+Get total number of states.  
+***Return :*** Single mode : If no current state 0 else 1.   
+&emsp;&emsp;&emsp;&emsp;Stackable mode : number of states.  
+<br> </br>
+#### <ins>**GetStatesAsString**</ins>
+```C#
+public List<string> GetStatesAsString();
+```
+Get states list.  
+***Return :*** A list with all state as string (in order).
+<br> </br>
+#### <ins>**GetStatesAsType**</ins>
+```C#
+public List<Type> GetStatesAsType();
+```
+Get states list.  
+***Return :*** A list with all states as System.Type (in order).
+<br> </br>
+#### <ins>**GetCurrentState**</ins>
+```C#
+public State GetCurrentState();
+```
+Get the current running state.  
+***Return :*** The current running state.
+
+<br> </br>
 ### State Variables
 This component is automatically added with State machine, it can be removed and place in another Object and re-linked.
 State Variables component is here to give access at scripts / objects for states.
@@ -87,3 +167,7 @@ You can have access to the state machine owner of the state via the public varia
 The idea of this project pop out after watching some codes and observed people and also myself, alwase create a new state machine script for every behaviour (principaly when caching states).
 
 This project was create by myself after 9 months of practice in c# and unity.
+
+## License
+
+[MIT License](https://github.com/Tama-sama/Unity-GenericStateMachine/blob/main/LICENSE)
