@@ -40,7 +40,9 @@ First you will need to add the component "StateMachine" to the gameObject you wa
 This component is automatically added with State machine, it can be removed and place in another Object and re-linked.
 State Variables component is here to give access at scripts / objects for states.
 
-<img src="https://github.com/Tama-sama/Unity-GenericStateMachine/blob/Description/Docs/StateVariables.PNG" height="130">  
+<img src="https://github.com/Tama-sama/Unity-GenericStateMachine/blob/Description/Docs/StateVariables.PNG" height="130"> <!-- -->
+<img src="https://github.com/Tama-sama/Unity-GenericStateMachine/blob/Description/Docs/Set_StateVariable.gif" height="400">  
+
 
 It is basically a list with a name and a reference of any type of object.
 - <ins>**Name**</ins> : To be found when using `Get<T>("name")` method 
