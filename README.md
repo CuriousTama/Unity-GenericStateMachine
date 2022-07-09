@@ -50,6 +50,17 @@ It is basically a list with a name and a reference of any type of object.
  
 ### State
 State an abstract class that you will need for every state.
+
+```c#
+using GenericStateMachine;
+
+public class YourStateName : State
+{
+    // Add your overrides here.
+}
+
+```
+
 The state class have base methods you can override : 
 - <ins>**Init**</ins> : Called when a state is created (**not cached** called when you add or change state / **cached** called when a state is created in the cache (awake state machine))
 - <ins>**Enter**</ins> : Called when entering a new state (**ChangeState()** and **AddState()**)  
@@ -67,6 +78,7 @@ NOTE : if the state machine is in stack-base mode and caching : when the state i
 - <ins>**RegisterInput**</ins> : Called inside base.Enter() and base.Resume().
 - <ins>**UnregisterInput**</ins> : Called inside base.Exit() and base.Pause().
 
+You can have access to the state machine owner of the state via the public variable `stateMachine`.
 
 ## History
 
