@@ -1,6 +1,8 @@
 # Generic State Machine for unity (C#)
 
-A state machine that try to be compatible with every use case possible.
+A state machine that try to be compatible with every use case possible.  
+
+Tested and working Unity 2021.3.1f1 (LTS)
 <br> </br>
 ## How is this state machine generic ?
 
@@ -82,6 +84,6 @@ You can have access to the state machine owner of the state via the public varia
 
 ## History
 
-The project was born out after watching some codes and observed people and also myself, alwase create a new state machine script for every behaviour (principaly when caching states).
+The idea of this project pop out after watching some codes and observed people and also myself, alwase create a new state machine script for every behaviour (principaly when caching states).
 
 This project was create by myself after 9 months of practice in c# and unity.
