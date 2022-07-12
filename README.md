@@ -3,6 +3,8 @@
 A state machine that try to be compatible with every use case possible.  
 
 Tested and working Unity 2021.3.1f1 (LTS)
+
+If you see anything that not working, seems not right or missing, don't esitate to tell me.
 <br> </br>
 ## How is this state machine generic ?
 
