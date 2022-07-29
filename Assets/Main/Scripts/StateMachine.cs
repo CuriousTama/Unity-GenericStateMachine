@@ -68,7 +68,7 @@ namespace GenericStateMachine
 #if UNITY_EDITOR
         private void OnValidate()
         {
-            // Delay OnValidate() call beacause of AddComponent throwing a warning if done at a wrong timing.
+            // Delay OnValidate() call because of AddComponent throwing a warning if done at a wrong timing.
             EditorApplication.delayCall += _OnValidate;
         }
 
