@@ -168,7 +168,19 @@ You can have access to the state machine owner of the state via the public varia
 
 The idea of this project pop out after watching some codes and observed people and also myself, alwase create a new state machine script for every behaviour (principaly when caching states).
 
-This project was create by myself after 9 months of practice in c# and unity.
+This project was create by myself after 9 months of practice in C# and unity.
+
+### Goal :
+- Make a state machine generic enough to not have to create multiple scripts for each state machine.
+
+### Problem encounters and how I have resolved them : 
+- Make the user set a sort of "Type" in the inspector : Use MonoScript.
+- MonoScript are not usable outside the editor :  Get the type from string and use reflection.
+
+### What I've learned :
+- Reflection in C#.
+- Editor scripting in unity.
+- Make a decent documentation. 
 
 ## License
 
